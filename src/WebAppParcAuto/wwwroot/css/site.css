@@ -1,0 +1,87 @@
+
+:root {
+    --th-color-1: #DFF2EB;
+    --th-color-2: #B9E5E8;
+    --th-color-3: #7AB2D3;
+    --th-color-4: #4A628A;
+}
+
+html {
+  font-size: 16px;
+}
+
+
+.subapp-item {
+    width: 9rem;
+    height: 8rem;
+    border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    -moz-border-radius: 10px 10px 10px 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--bs-gray-400);
+    cursor: pointer;
+}
+
+.subapp-item > div {
+    display: flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.subapp-item > div:first-child {
+    height: 4.5rem;
+    color: var(--bs-blue);
+    border-bottom: 1px solid var(--bs-blue);
+    font-size: 3rem;
+}
+
+.subapp-item > div:first-child + div {
+    height: 3.5rem;
+    line-height: 1.15;
+    text-align:center;
+    padding: .5rem;
+}
+
+.subapp-item:hover {
+    border-color: var(--bs-gray-600);
+}
+
+.subapp-item:hover > div:first-child {
+    border-bottom: 1px solid var(--bs-indigo);
+}
+
+/*--- Remove Arrows/Spinners ---*/
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.fs-1_5x {
+    font-size: 1.5em;
+}
+.fs-2x {
+    font-size: 2em;
+}
+.lh-1_2{
+    line-height: 1.2 !important;
+}
+
+/* Harta */
+.pinIconSrc {
+    mask-image: url("/img/geo-alt-fill.svg");
+    mask-size: cover;
+    background-color: var(--bs-red);
+}
+
+.pinIconDst {
+    mask-image: url("/img/geo-alt-fill.svg");
+    mask-size: cover;
+    background-color: var(--bs-blue);
+}

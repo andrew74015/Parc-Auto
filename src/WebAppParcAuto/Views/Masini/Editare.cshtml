@@ -1,0 +1,98 @@
+﻿@model WebAppParcAuto.Models.Masini.EditareViewModel
+
+@{
+    ViewData["Title"] = "Editare mașină";
+}
+
+<div class="d-flex justify-content-between bg-light p-2 border-bottom border-1 border-dark-subtle">
+    <div class="d-flex justify-content-start align-items-center">
+        <a class="btn btn-warning" href="@Model.ReturnUrl">
+            <i class="bi bi-x"></i>
+            <span>Renunțare</span>
+        </a>
+    </div>
+    @if (Model.Masina.Id != Guid.Empty)
+    {
+        <div class="d-flex justify-content-end align-items-center gap-2">
+            <button type="button" class="btn btn-success" id="btnConfirmareEditareMasina">
+                <i class="bi bi-car-front"></i>
+                <span>Confirmare modificare</span>
+            </button>
+        </div>
+    }
+</div>
+
+@if(Model.DetaliiEroare != null)
+{
+    <div class="alert alert-danger m-4" role="alert">
+        <i class="bi bi-exclamation-circle-fill text-danger pe-1"></i>
+        <span>@Model.DetaliiEroare</span>
+    </div>
+}
+
+@if (Model.ModelErrors?.Count > 0)
+{
+    <div class="alert alert-danger m-4" role="alert">
+        @foreach(var modelError in Model.ModelErrors)
+        {
+            <div>
+                <i class="bi bi-exclamation-circle-fill text-danger pe-1"></i>
+                <span>@modelError.ErrorMessage</span>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.Masina.Id != Guid.Empty)
+{    
+    <div class="mt-2">   
+        <form action="/Masini/Editare?returnUrl=@Model.ReturnUrl" method="POST" class="needs-validation" id="frmEditareMasina" novalidate autocomplete="off">
+            @Html.AntiForgeryToken()
+            <div>
+                <input type="hidden" asp-for="Masina.Id" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Masina.Marca" class="form-label"></label>
+                <input asp-for="Masina.Marca" class="form-control" />
+                <span asp-validation-for="Masina.Marca" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Masina.NumarDeKilometri" class="form-label"></label>
+                <input asp-for="Masina.NumarDeKilometri" class="form-control" />
+                <span asp-validation-for="Masina.NumarDeKilometri" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Masina.AnFabricatie" class="form-label"></label>
+                <input asp-for="Masina.AnFabricatie" class="form-control" />
+                <span asp-validation-for="Masina.AnFabricatie" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Masina.Model" class="form-label"></label>
+                <input asp-for="Masina.Model" class="form-control" />
+                <span asp-validation-for="Masina.Model" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Masina.SerieDeSasiu" class="form-label"></label>
+                <input asp-for="Masina.SerieDeSasiu" class="form-control" />
+                <span asp-validation-for="Masina.SerieDeSasiu" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Masina.NumarDeInmatriculare" class="form-label"></label>
+                <input asp-for="Masina.NumarDeInmatriculare" class="form-control" />
+                <span asp-validation-for="Masina.NumarDeInmatriculare" class="text-danger"></span>
+            </div>
+        </form>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        'use strict'
+
+        $(function () {
+            $("#btnConfirmareEditareMasina").on("click", function(){
+                $("#frmEditareMasina").submit();
+            });
+        });
+    </script>
+}

@@ -1,0 +1,11 @@
+### Instalare tool pentru creare script migrare sau stergerea ultimului script.
+dotnet tool install --global dotnet-ef
+
+### Sintaxa
+dotnet ef migrations add [nume_migrare]
+dotnet ef migrations remove
+
+### Crearea unei migrari (execmplu)
+In folderul proiectului Database (.\src\Database)
+
+dotnet ef migrations add Angajat_Creare

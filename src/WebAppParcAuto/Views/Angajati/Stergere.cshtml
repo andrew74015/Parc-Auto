@@ -1,0 +1,93 @@
+﻿@model WebAppParcAuto.Models.Angajati.StergereViewModel
+
+@{
+    ViewData["Title"] = "Ștergere angajat";
+}
+
+<div class="d-flex justify-content-between bg-light p-2 border-bottom border-1 border-dark-subtle">
+    <div class="d-flex justify-content-start align-items-center">
+        <a class="btn btn-warning" href="@Model.ReturnUrl">
+            <i class="bi bi-x"></i>
+            <span>Renunțare</span>
+        </a>
+    </div>
+    @if (Model.Angajat.Id != Guid.Empty)
+    {
+        <div class="d-flex justify-content-end align-items-center gap-2">
+            <button type="button" class="btn btn-danger" id="btnConfirmareStergereAngajat">
+                <i class="bi bi-person-plus"></i>
+                <span>Confirmare ștergere</span>
+            </button>
+        </div>
+    }
+</div>
+
+@if (Model.DetaliiEroare != null)
+{
+    <div class="alert alert-danger m-4" role="alert">
+        <i class="bi bi-exclamation-circle-fill text-danger pe-1"></i>
+        <span>@Model.DetaliiEroare</span>
+    </div>
+}
+
+@if (Model.ModelErrors?.Count > 0)
+{
+    <div class="alert alert-danger m-4" role="alert">
+        @foreach (var modelError in Model.ModelErrors)
+        {
+            <div>
+                <i class="bi bi-exclamation-circle-fill text-danger pe-1"></i>
+                <span>@modelError.ErrorMessage</span>
+            </div>
+        }
+    </div>
+}
+
+
+@if (Model.Angajat.Id != Guid.Empty)
+{
+    <div class="mt-2">   
+        <form action="/Angajati/Stergere?returnUrl=@Model.ReturnUrl" method="POST"  id="frmStergereAngajat" novalidate autocomplete="off">
+            @Html.AntiForgeryToken()
+            <div>
+                <input type="hidden" asp-for="Angajat.Id" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Angajat.Nume" class="form-label"></label>
+                <input asp-for="Angajat.Nume" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Angajat.Prenume" class="form-label"></label>
+                <input asp-for="Angajat.Prenume" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Angajat.Telefon" class="form-label"></label>
+                <input asp-for="Angajat.Telefon" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Angajat.Email" class="form-label"></label>
+                <input asp-for="Angajat.Email" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Angajat.Cnp" class="form-label"></label>
+                <input asp-for="Angajat.Cnp" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Angajat.Marca" class="form-label"></label>
+                <input asp-for="Angajat.Marca" class="form-control" readonly />
+            </div>
+        </form>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        'use strict'
+
+        $(function () {
+            $("#btnConfirmareStergereAngajat").on("click", function(){
+                $("#frmStergereAngajat").submit();
+            });
+        });
+    </script>
+}

@@ -1,0 +1,493 @@
+﻿@model WebAppParcAuto.Models.Deplasari.EditareViewModel
+
+@{
+    ViewData["Title"] = "Editare deplasare";
+}
+
+<div class="d-flex justify-content-between bg-light p-2 border-bottom border-1 border-dark-subtle">
+    <div class="d-flex justify-content-start align-items-center">
+        <a class="btn btn-warning" href="@Model.ReturnUrl">
+            <i class="bi bi-x"></i>
+            <span>Renunțare</span>
+        </a>
+    </div>
+    @if (Model.Deplasare.Id != Guid.Empty)
+    {
+        <div class="d-flex justify-content-end align-items-center gap-2">
+            <button type="button" class="btn btn-success" id="btnConfirmareEditareDeplasare">
+                <i class="bi bi-fuel-pump"></i>
+                <span>Confirmare modificare</span>
+            </button>
+        </div>
+    }
+</div>
+
+@if(Model.DetaliiEroare != null)
+{
+    <div class="alert alert-danger m-4" role="alert">
+        <i class="bi bi-exclamation-circle-fill text-danger pe-1"></i>
+        <span>@Model.DetaliiEroare</span>
+    </div>
+}
+
+@if (Model.ModelErrors?.Count > 0)
+{
+    <div class="alert alert-danger m-4" role="alert">
+        @foreach(var modelError in Model.ModelErrors)
+        {
+            <div>
+                <i class="bi bi-exclamation-circle-fill text-danger pe-1"></i>
+                <span>@modelError.ErrorMessage</span>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.Deplasare.Id != Guid.Empty)
+{
+    <div class="mt-2 row">
+        <div class="col-xl-6" id="harta" style="align-self:stretch;min-height:20rem;">
+        </div>
+        <div class="col-xl-6">
+            <form action="/Deplasari/Editare?returnUrl=@Model.ReturnUrl" method="POST" class="needs-validation" id="frmEditareDeplasare" novalidate autocomplete="off">
+                @Html.AntiForgeryToken()
+                <div>
+                    <input type="hidden" asp-for="Deplasare.Id" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Deplasare.AngajatId" class="form-label"></label>
+                    <select asp-for="Deplasare.AngajatId" class="form-control">
+                        <option value="@(Model.Deplasare?.AngajatId)">@Model.Deplasare?.Angajat?.Nume @Model.Deplasare?.Angajat?.Prenume</option>
+                    </select>
+                    <span asp-validation-for="Deplasare.AngajatId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Deplasare.MasinaId" class="form-label"></label>
+                    <select asp-for="Deplasare.MasinaId" class="form-control">
+                        <option value="@(Model.Deplasare?.MasinaId)">@Model.Deplasare?.Masina?.NumarDeInmatriculare @Model.Deplasare?.Masina?.NumarDeKilometri KM</option>
+                    </select>
+                    <span asp-validation-for="Deplasare.MasinaId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Deplasare.Motiv" class="form-label"></label>
+                    <input asp-for="Deplasare.Motiv" class="form-control" />
+                    <span asp-validation-for="Deplasare.Motiv" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Deplasare.Descriere" class="form-label"></label>
+                    <textarea asp-for="Deplasare.Descriere" class="form-control" rows="2"></textarea>
+                    <span asp-validation-for="Deplasare.Descriere" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <!-- Src -->
+                    <div class="col-md-6">
+                        <div class="mb-3 position-relative">
+                            <!--
+                            <i class="bi bi-box-arrow-right ps-2 text-primary fs-1_5x position-absolute" style="top:-.25rem; left:0;" ></i>
+                            -->
+                            <i class="bi bi-circle-fill small" style="color:var(--bs-red)"></i>
+                            <label asp-for="Deplasare.SrcX" class="form-label"></label>
+                            <div class="d-flex align-items-center gap-2">
+                                <div>
+                                    <input asp-for="Deplasare.SrcX" class="form-control mb-2" readonly title="Longitudine" />
+                                    <input asp-for="Deplasare.SrcY" class="form-control" readonly title="Latitudine" />
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-secondary" id="btnAlegeSrcDePeHarta">
+                                        <i class="bi bi-pin-map-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Deplasare.SrcX" class="text-danger"></span>
+                            <span asp-validation-for="Deplasare.SrcY" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Deplasare.DataPlecare" class="form-label"></label>
+                            <input asp-for="Deplasare.DataPlecare" class="form-control" type="text" />
+                            <span asp-validation-for="Deplasare.DataPlecare" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!-- Dst -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <i class="bi bi-circle-fill small" style="color:var(--bs-blue)"></i>
+                            <label asp-for="Deplasare.DstX" class="form-label"></label>
+                            <div class="d-flex align-items-center gap-2">
+                                <div>
+                                    <input asp-for="Deplasare.DstX" class="form-control mb-2" readonly title="Longitudine" />
+                                    <input asp-for="Deplasare.DstY" class="form-control" readonly title="Latitudine" />
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-secondary" id="btnAlegeDstDePeHarta">
+                                        <i class="bi bi-pin-map-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Deplasare.DstX" class="text-danger"></span>
+                            <span asp-validation-for="Deplasare.DstY" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Deplasare.DataSosire" class="form-label"></label>
+                            <input asp-for="Deplasare.DataSosire" class="form-control" type="text" />
+                            <span asp-validation-for="Deplasare.DataSosire" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-secondary d-flex justify-content-center align-items-center gap-2 p-0 py-2">
+                    <button type="button" class="btn btn-secondary" id="btnAddRoute">
+                        <i class="bi bi-arrow-left-right"></i>
+                        <span>Caută rută</span>
+                    </button>
+                    <button type="button" class="btn btn-danger" id="btnRemoveRoute">
+                        <i class="bi bi-x"></i>
+                        <span>Anulare</span>
+                    </button>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Deplasare.Distanta" class="form-label"></label>
+                    <input asp-for="Deplasare.Distanta" class="form-control" />
+                    <span asp-validation-for="Deplasare.Distanta" class="text-danger"></span>
+                </div>
+                <div class="mb-0">
+                    <label asp-for="Deplasare.Observatii" class="form-label"></label>
+                    <textarea asp-for="Deplasare.Observatii" class="form-control" rows="2"></textarea>
+                    <span asp-validation-for="Deplasare.Observatii" class="text-danger"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        'use strict'
+
+        var page = {
+            Map: {
+                $: $('#harta'),
+                Layers: {},
+                Markers: {},
+                Options: {
+                    center: [45.9432, 24.9668],
+                    zoom: 6,
+                    zoomControl: true,
+                    scrollWheelZoom: true,
+                    layers: []
+                }
+            },
+
+            InitializeMap: function () {
+                var m = this.Map;
+
+                m.Layers.Default = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 18,
+                    opacity: 1
+                });
+
+                m.Options.layers.push(m.Layers.Default);
+
+                m.Instance = L.map(m.$.attr("id"), m.Options);
+
+                var pinIconSrc =  L.divIcon({
+                    className: 'pinIconSrc',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                });
+
+                var pinIconDst =  L.divIcon({
+                    className: 'pinIconDst',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                });
+
+                m.Markers.Src = L.marker([@Model.Deplasare.SrcY, @Model.Deplasare.SrcX],{
+                    icon: pinIconSrc,
+                    draggable: true,
+                    opacity: 1,
+                    title: "Plecare"
+                });
+
+                m.Markers.Src.on('drag', function(e) {
+                    $("#Deplasare_SrcX").val(e.latlng.lng);
+                    $("#Deplasare_SrcY").val(e.latlng.lat);
+                });
+
+                m.Markers.Dst = L.marker([@Model.Deplasare.DstY, @Model.Deplasare.DstX],{
+                    icon: pinIconDst,
+                    draggable: true,
+                    opacity: 1,
+                    title: "Sosire"
+                });
+
+                m.Markers.Dst.on('drag', function(e) {
+                    $("#Deplasare_DstX").val(e.latlng.lng);
+                    $("#Deplasare_DstY").val(e.latlng.lat);
+                });
+
+                m.Markers.SrcAdded = false;
+                m.Markers.DstAdded = false;
+
+                m.RoutingControlAdded = false;
+            },
+        };
+
+
+        $(function () {
+            $("#btnConfirmareEditareDeplasare").on("click", function(){
+                $("#frmEditareDeplasare").submit();
+            });
+
+            page.InitializeMap();
+
+            $("#Deplasare_AngajatId").select2({
+                dropdownParent: $("#frmEditareDeplasare").parent(),
+                dropdownAutoWidth: true,
+                allowClear: true,
+                minimumInputLength: 0,
+                width: '100%',
+                ajax: {
+                    delay: App.Select2.AjaxRequestDelay,
+                    url: "/AngajatiApi/Select2Angajati",
+                    dataType: "json",
+                    data: App.Select2.CustomAjaxData,
+                    processResults: App.Select2.CustomAjaxProcessResults
+                },
+                templateSelection: function(data){
+                    if (!data.id)
+                        return data.text;
+
+                    return $('<i class="bi bi-person-fill pe-1"></i><span>' + data.text + '</span>');
+                },
+                templateResult: function (data) {
+                if (data.tag)
+                    return $(
+                        '<div class="flex-grow-1 ps-2 d-flex align-items-center gap-2">' +
+                        '    <div>' +
+                        '        <i class="bi bi-person-fill fs-2x"></i>' +
+                        '    </div>' +
+                        '    <div class="lh-1_2">' +
+                        '        <div class="d-flex align-items-center gap-3">' +
+                        '            <div class="fw-semibold">' + data.text + '</div>' +
+                        '            <div class="">' +
+                        '                <i class="bi bi-telephone pe-1"></i>' +
+                        '                <span>' + data.tag.Telefon + '</span>' +
+                        '            </div>' +
+                        '        </div>' +
+                        '        <div class="d-flex align-items-center gap-3">' +
+                        '            <div>' + data.tag.Email + '</div>' +
+                        '            <div>' +
+                        '                <i class="bi bi-tag"></i>' +
+                        '                <span>' + data.tag.Marca + '</span>' +
+                        '            </div>' +
+                        '        </div>' +
+                        '    </div>' +
+                        '</div>'
+                    );
+                }
+            })
+            .on("select2:select", function (e) {
+                $(this).valid();
+            }).on("select2:unselect", function (e) {
+                $(this).valid();
+            });
+
+            $("#Deplasare_MasinaId").select2({
+                dropdownParent: $("#frmEditareDeplasare").parent(),
+                dropdownAutoWidth: true,
+                allowClear: true,
+                minimumInputLength: 0,
+                width: '100%',
+                ajax: {
+                    delay: App.Select2.AjaxRequestDelay,
+                    url: "/MasiniApi/Select2Masini",
+                    dataType: "json",
+                    data: App.Select2.CustomAjaxData,
+                    processResults: App.Select2.CustomAjaxProcessResults
+                },
+                templateSelection: function(data){
+                    if (!data.id)
+                        return data.text;
+
+                    return $('<i class="bi bi-car-front-fill pe-2"></i><span>' + data.text + '</span>');
+                },
+                templateResult: function (data) {
+                if (data.tag)
+                    return $(
+                        '<div class="flex-grow-1 ps-2 d-flex align-items-center gap-2">' +
+                        '    <div>' +
+                        '        <i class="bi bi-car-front-fill fs-2x"></i>' +
+                        '    </div>' +
+                        '    <div class="lh-1_2">' +
+                        '        <div class="d-flex align-items-center gap-1">' +
+                        '            <div class="fw-semibold">' + data.tag.Marca + ' ' + data.tag.Model + '</div>' +
+                        '            <span>' + data.tag.AnFabricatie + '</span>' +
+                        '        </div>' +
+                        '        <div class="d-flex align-items-center gap-2">' +
+                        '            <div class="">' + data.tag.NumarDeInmatriculare + '</div>' +
+                        '            <span>' + data.tag.NumarDeKilometri + ' KM</span>' +
+                        '        </div>' +
+                        '    </div>' +
+                        '</div>'
+                    );
+                }
+            })
+            .on("select2:select", function (e) {
+                $(this).valid();
+            }).on("select2:unselect", function (e) {
+                $(this).valid();
+            });
+
+            $("#Deplasare_DataPlecare,#Deplasare_DataSosire").tempusDominus({
+                localization:{
+                    locale: "ro",
+                    startOfTheWeek: 1,
+                    format: 'dd/MM/yyyy HH:mm',
+                },
+                display: {
+                    sideBySide: true,
+                    icons: {
+                      type: 'icons',
+                      time: 'bi bi-clock-fill',
+                      date: 'bi bi-calendar-fill',
+                      up: 'bi bi-caret-up-fill',
+                      down: 'bi bi-caret-down-fill',
+                      previous: 'bi bi-caret-left-fill',
+                      next: 'bi bi-caret-right-fill',
+                      today: 'bi bi-calendar-check-fill',
+                      clear: 'bi bi-trash3-fill',
+                      close: 'bi bi-check-lg'
+                    },
+                    buttons:{
+                        today: true,
+                        clear: true,
+                        close: true
+                    }
+                }
+            });
+
+
+            $("#btnAlegeSrcDePeHarta").on('click', function(e) {
+                if(!page.Map.Markers.SrcAdded)
+                {
+                    page.Map.Markers.Src.addTo(page.Map.Instance);
+                    page.Map.Markers.SrcAdded = true;
+                }
+
+                $("#btnAlegeSrcDePeHarta").prop("disabled",true);
+
+                if (page.Map.Markers.SrcAdded && page.Map.Markers.DstAdded)
+                    $("#btnAddRoute").prop("disabled",false);
+
+                var location = page.Map.Markers.Src.getLatLng();
+
+                page.Map.Instance.panTo(location);
+
+                $("#Deplasare_SrcX").val(location.lng).valid();
+                $("#Deplasare_SrcY").val(location.lat).valid();
+            });
+
+
+            $("#btnAlegeDstDePeHarta").on('click', function(e) {
+                if(!page.Map.Markers.DstAdded)
+                {
+                    page.Map.Markers.Dst.addTo(page.Map.Instance);
+                    page.Map.Markers.DstAdded = true;
+                }
+
+                $("#btnAlegeDstDePeHarta").prop("disabled",true);
+
+                if (page.Map.Markers.SrcAdded && page.Map.Markers.DstAdded)
+                    $("#btnAddRoute").prop("disabled",false);
+
+                var location = page.Map.Markers.Dst.getLatLng();
+
+                page.Map.Instance.panTo(location);
+
+                $("#Deplasare_DstX").val(location.lng).valid();
+                $("#Deplasare_DstY").val(location.lat).valid();
+            });
+
+
+            $("#btnAddRoute").on("click", function(){
+                var m = page.Map;
+
+                $("#btnAddRoute").prop("disabled", true);
+                $("#btnRemoveRoute").prop("disabled", false);
+
+                if (!m.Markers.SrcAdded || !m.Markers.DstAdded)
+                {
+                    alert("Selectați/Afișați locațiile de plecare și sosire!")
+                    return;
+                }
+
+                m.Instance.removeLayer(m.Markers.Src);
+                m.Markers.SrcAdded = false;
+                $("#btnAlegeSrcDePeHarta").prop('disabled', true);
+
+
+                m.Instance.removeLayer(m.Markers.Dst);
+                m.Markers.DstAdded = false;
+                $("#btnAlegeDstDePeHarta").prop('disabled', true);
+
+                m.RoutingControl = L.Routing.control({
+                    waypoints: [
+                        m.Markers.Src.getLatLng(),
+                        m.Markers.Dst.getLatLng()
+                    ],
+                    routeWhileDragging: true
+                });
+
+                m.RoutingControl.addTo(m.Instance);
+
+                m.RoutingControl.on('routesfound', function(e) {
+                    var routes = e.routes;
+                    var summary = routes[0].summary;
+
+                    var distance = summary.totalDistance;
+
+                    var distanceInKm = (distance / 1000).toFixed(2);
+
+                    $("#Deplasare_Distanta").val(Math.round(distanceInKm)).valid();
+
+                    //console.log("routesfound", e);
+
+                    var srcLocation = e.waypoints[0].latLng;
+                    $("#Deplasare_SrcX").val(srcLocation.lng);
+                    $("#Deplasare_SrcY").val(srcLocation.lat);
+
+                    var dstLocation = e.waypoints[e.waypoints.length-1].latLng;
+                    $("#Deplasare_DstX").val(dstLocation.lng);
+                    $("#Deplasare_DstY").val(dstLocation.lat);
+                });
+            });
+
+
+            $("#btnRemoveRoute").on("click", function(){
+                var m = page.Map
+
+                if (!m.Markers.SrcAdded && !m.Markers.DstAdded && m.RoutingControl)
+                {
+                    m.Instance.removeControl(m.RoutingControl);
+
+                    m.Markers.SrcAdded = false;
+                    m.Markers.DstAdded = false;
+
+                    $("#btnAlegeSrcDePeHarta, #btnAlegeDstDePeHarta").prop("disabled",false);
+                    $("#btnAddRoute,#btnRemoveRoute").prop("disabled",true);
+
+                    $("#Deplasare_SrcX").val(null).valid();
+                    $("#Deplasare_SrcY").val(null).valid();
+
+                    $("#Deplasare_DstX").val(null).valid();
+                    $("#Deplasare_DstY").val(null).valid();
+                }
+            });
+
+
+            $("#btnAddRoute,#btnRemoveRoute").prop("disabled",true);
+        });
+    </script>
+}

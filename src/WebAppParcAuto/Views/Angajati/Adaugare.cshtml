@@ -1,0 +1,89 @@
+﻿@model WebAppParcAuto.Models.Angajati.AdaugareViewModel
+
+@{
+    ViewData["Title"] = "Adăugare angajat";
+}
+
+<div class="d-flex justify-content-between bg-light p-2 border-bottom border-1 border-dark-subtle">
+    <div class="d-flex justify-content-start align-items-center">
+        <a class="btn btn-warning" href="@Model.ReturnUrl">
+            <i class="bi bi-x"></i>
+            <span>Renunțare</span>
+        </a>
+    </div>
+    <div class="d-flex justify-content-end align-items-center gap-2">
+        <button type="button" class="btn btn-success" id="btnConfirmareAdaugareAngajat">
+            <i class="bi bi-person-plus"></i>
+            <span>Confirmare înregistrare</span>
+        </button>
+    </div>
+</div>
+
+@if(Model.DetaliiEroare != null)
+{
+    <div class="alert alert-danger m-4" role="alert">
+        <i class="bi bi-exclamation-circle-fill text-danger pe-1"></i>
+        <span>@Model.DetaliiEroare</span>
+    </div>
+}
+
+@if (Model.ModelErrors?.Count > 0)
+{
+    <div class="alert alert-danger m-4" role="alert">
+        @foreach(var modelError in Model.ModelErrors)
+        {
+            <div>
+                <i class="bi bi-exclamation-circle-fill text-danger pe-1"></i>
+                <span>@modelError.ErrorMessage</span>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-2">   
+    <form action="/Angajati/Adaugare?returnUrl=@Model.ReturnUrl" method="POST" class="needs-validation" id="frmAdaugareAngajat" novalidate autocomplete="off">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label asp-for="Angajat.Nume" class="form-label"></label>
+            <input asp-for="Angajat.Nume" class="form-control" />
+            <span asp-validation-for="Angajat.Nume" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Angajat.Prenume" class="form-label"></label>
+            <input asp-for="Angajat.Prenume" class="form-control" />
+            <span asp-validation-for="Angajat.Prenume" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Angajat.Telefon" class="form-label"></label>
+            <input asp-for="Angajat.Telefon" class="form-control" />
+            <span asp-validation-for="Angajat.Telefon" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Angajat.Email" class="form-label"></label>
+            <input asp-for="Angajat.Email" class="form-control" />
+            <span asp-validation-for="Angajat.Email" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Angajat.Cnp" class="form-label"></label>
+            <input asp-for="Angajat.Cnp" class="form-control" />
+            <span asp-validation-for="Angajat.Cnp" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Angajat.Marca" class="form-label"></label>
+            <input asp-for="Angajat.Marca" class="form-control" />
+            <span asp-validation-for="Angajat.Marca" class="text-danger"></span>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        'use strict'
+
+        $(function () {
+            $("#btnConfirmareAdaugareAngajat").on("click", function(){
+                $("#frmAdaugareAngajat").submit();
+            });
+        });
+    </script>
+}

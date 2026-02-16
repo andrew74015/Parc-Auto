@@ -1,0 +1,148 @@
+﻿@using Newtonsoft.Json
+@model WebAppParcAuto.Models.Angajati.ListaAngajatiViewModel
+
+@{
+    ViewData["Title"] = "Listă angajați";
+
+    var returnUrl = ViewContext.HttpContext.Request.Path + ViewContext.HttpContext.Request.QueryString;
+}
+
+<div class="d-flex justify-content-between bg-light p-2 border-bottom border-1 border-dark-subtle">
+    <div class="d-flex align-items-center">
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control"  title="Căutare după nume, prenume și email" placeholder="Căutare" id="txtCautare" value="@Model.SearchKey">            
+        </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <button type="button" class="btn btn-secondary" id="btnPaginarePrev">
+            <i class="bi bi-arrow-bar-left"></i>
+        </button>
+        <div>@(Model.PageNumber)/@(Model.PageCount)</div>
+        <button type="button" class="btn btn-secondary" id="btnPaginareNext">
+            <i class="bi bi-arrow-bar-right"></i>
+        </button>
+    </div lass="d-flex align-items-center gap-2">        
+    <div class="d-flex justify-content-end align-items-center">
+        @if(Model.TotalRecords != Model.TotalFilteredRecords)
+        {
+            <span class="me-4">Înreg. <span class="text-primary"><i class="bi bi-funnel"></i> @Model.TotalFilteredRecords</span> / @Model.TotalRecords</span>
+        }
+        else
+        {
+            <span class="me-4">Înreg. @Model.TotalRecords</span>
+        }
+        <a  class="btn btn-primary" href="/Angajati/Adaugare?returnUrl=@returnUrl">
+            <i class="bi bi-person-add"></i>
+            <span>Adăugare angajat</span>
+        </a>
+    </div>
+</div>
+
+@if (Model.Angajati.Count == 0)
+{
+    <div class="alert alert-info m-4" role="alert">
+        <i class="bi bi-exclamation-circle-fill pe-1"></i>
+        <span>Nicio înregistrare</span>
+    </div>
+}
+else
+{
+    foreach(var angajatDto in Model.Angajati)
+    {
+        <div class="d-flex justify-content-between gap-2 my-0 border-bottom border-1 border-dark-subtle">
+            <div class="flex-grow-1 ps-2 d-flex align-items-center gap-2">
+                <div>
+                    <i class="bi bi-person-fill fs-2x"></i>
+                </div>
+                <div class="lh-1_2">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="fw-semibold">@angajatDto.Nume @angajatDto.Prenume</div>
+                        <div class="">
+                            <i class="bi bi-telephone pe-1"></i>
+                            <span>@angajatDto.Telefon</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div>@angajatDto.Email</div>
+                        <div>
+                            <i class="bi bi-tag"></i>
+                            <span>@angajatDto.Marca</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="gap-2 d-flex align-items-center pe-2">
+                <a class="btn btn-primary" href="/Angajati/Editare?id=@angajatDto.Id&returnUrl=@returnUrl">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+                <a class="btn btn-danger" href="/Angajati/Stergere?id=@angajatDto.Id&returnUrl=@returnUrl">
+                    <i class="bi bi-trash-fill"></i>
+                </a>
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    <script>
+        var page = {
+            Model: [@Html.Raw(JsonConvert.SerializeObject(Model, Formatting.None))][0],
+            
+            NextPage: function(){
+                window.location = "/Angajati/Lista?" + $.param({
+                    pn: this.Model.PageNumber + 1,
+                    ps: this.Model.PageSize,
+                    sk: this.Model.SearchKey
+                });
+            },
+
+            PrevPage: function(){
+                window.location = "/Angajati/Lista?" + $.param({
+                    pn: this.Model.PageNumber - 1,
+                    ps: this.Model.PageSize,
+                    sk: this.Model.SearchKey
+                });
+            },
+            
+            SearchTimeout: 0  
+        };
+
+        $(function () {
+            $("#btnPaginareNext").on("click", function(){
+                page.NextPage();
+            });
+
+            $("#btnPaginarePrev").on("click", function(){
+                page.PrevPage();
+            });
+
+            $("#txtCautare")
+                .on("input", function(){
+                    clearTimeout(page.SearchTimeout);
+                
+                    page.Model.SearchKey = $(this).val();
+
+                    setTimeout(function(){
+                        window.location = "/Angajati/Lista?" + $.param({
+                        pn: page.Model.PageNumber,
+                        ps: page.Model.PageSize,
+                        sk: page.Model.SearchKey
+                    });
+                                    
+                    },1000);
+                })
+                .on("focus", function(){
+                    var that = this;
+                    setTimeout(function(){ 
+                        that.selectionStart = that.selectionEnd = 10000; 
+                    }, 0);                    
+                });
+
+            if (page.Model.SearchKey)
+                $("#txtCautare").focus();
+        });
+    </script>
+}

@@ -1,0 +1,49 @@
+﻿@model WebAppParcAuto.Models.ErrorVm
+
+<div class="row mt-4">
+    <div class="col-xl-6 offset-xl-3 col-10 offset-1 row">
+        <div class="border-bottom border-1 border-c-6 mb-4 position-relative">
+            <h5>@Model.Title</h5>
+            <span class="position-absolute text-danger" style="top:-1em;left:-3rem;">
+                <i class="bi bi-exclamation-circle fs-1 text-danger"></i>
+            </span>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.Url))
+        {
+            <div class="mb-3">
+                <span>Resursă:</span>
+                <span>@Model.Url</span>
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Message))
+        {
+            <div class="mb-3">
+                <span>Detalii:</span>
+                <span class="text-danger">@Model.Message</span>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.TraceIdentifier) || !string.IsNullOrWhiteSpace(Model.ActivityId))
+        {
+            <div class="small font-monospace mb-3 text-secondary">
+                <div>
+                    <span>Referintă:</span>
+                    <span>@Model.TraceIdentifier @DateTime.Now</span>
+                </div>
+                <div>
+                    <span>@Model.ActivityId</span>
+                </div>
+            </div>
+        }
+        <div class="d-flex justify-content-start align-items-center gap-3">
+            <a class="icon-link align-items-baseline" href="javascript:history.back()" title="Pagina anterioară">
+                <i class="bi bi-arrow-left"></i>
+                <span>Pagina anterioara</span>
+            </a>
+            <a class="icon-link align-items-baseline" href="/" title="Pagina de start">
+                <i class="bi bi-house"></i>
+                <span>Pagina de start</span>
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Deconectat";
+}
+
+<div class="row mt-4">
+    <div class="col-xl-6 offset-xl-3 col-10 offset-1 row">
+        <div class="border-bottom border-1 border-c-4 mb-4 position-relative">
+            <h5>@ViewData["Title"] </h5>
+            <span class="position-absolute c-4" style="top:-1em;left:-3rem;">
+                <i class="bi bi-person-slash fs-1"></i>
+            </span>
+        </div>
+        <div class="mb-3">
+            <i class="fa fa-spin fa-spinner text-success"></i>
+            <span>Veți fi redirectat automat la pagina de start în câteva momente..</span>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            setTimeout(function () { window.location.replace("/"); }, 1500);
+        });
+    </script>
+}
